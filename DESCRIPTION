@@ -1,0 +1,24 @@
+Package: sequoiar
+Title: Utility Functions and Templates for Genomic Analysis
+Version: 0.1.0
+Authors@R: 
+    person(given = "Linxuan", 
+           family = "Zhang", 
+           email = "linxuan.zhang@sequoiagenetics.com", 
+           role = c("aut", "cre"))
+Description: Provides utility functions and template scripts commonly used in GWAS and bioinformatics analysis. Includes functions for harmonization, mlogp calculation, local LD clumping with PLINK, and SNP-to-gene mapping.
+Depends: R (>= 4.1)
+Imports: 
+    dplyr,
+    readr,
+    tibble,
+    purrr,
+    stringr,
+    data.table,
+    Rmpfr,
+    stats,
+    utils
+License: MIT
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.3.1
