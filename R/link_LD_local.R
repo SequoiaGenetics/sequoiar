@@ -1,3 +1,6 @@
+#' @importFrom magrittr %>%
+NULL
+
 link_LD_local = function(loc_data){
   ld_mat = ld_matrix_local(loc_data$data$SNP,with_alleles=F,bfile='util/plink/EUR',plink_bin='util/plink/plink')
   ld_df = data.frame(

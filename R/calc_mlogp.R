@@ -1,8 +1,6 @@
-# calc_mlogp.R
-# This script contains function to calculate mlogp for data.frame
-
-library(Rmpfr)
-
+#' Calculate -log10(p-value)
+#' @param df Data frame with p-value column
+#' @export
 cal_mlogp = function(df){
   # input:
   #   - df: a data.frame, need to have `pval` column
@@ -36,9 +34,9 @@ cal_mlogp = function(df){
     
     #  gradually increase prec
     while (any(is.infinite(inf_mlogp_df$mlogp))){
-      calculated_mlogp = asNumeric(
+      calculated_mlogp = Rmpfr::asNumeric(
         round(-log10(
-          2 * (1 - pnorm(abs(mpfr(inf_mlogp_df$beta, prec) / mpfr(inf_mlogp_df$se, prec))))
+          2 * (1 - pnorm(abs(Rmpfr::mpfr(inf_mlogp_df$beta, prec) / Rmpfr::mpfr(inf_mlogp_df$se, prec))))
         ), 5)
       )
       inf_mlogp_df$mlogp = calculated_mlogp

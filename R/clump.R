@@ -118,3 +118,15 @@ clump_local = function(df, clump_r2){
   }
   return(output_df)
 }
+
+check_and_setup_plink = function() {
+  dir.create("~/.yourpkg/plink", recursive = TRUE, showWarnings = FALSE)
+  plink_path = "~/.yourpkg/plink/plink"
+  if (!file.exists(plink_path)) {
+    url = "https://.../plink"  # use appropriate binary link
+    utils::download.file(url, plink_path)
+    Sys.chmod(plink_path, "0755")  # Make executable
+  }
+  # Similarly download EUR.* files
+  return(plink_path)
+}

@@ -12,7 +12,7 @@ complete_stats = function(){
     
     # function(beta = NA, se = NA, p_value = NA, method = "chisq") {
     # Ensure exactly one value is missing
-    missing_count <- sum(is.na(c(beta, se, p_value)))
+    missing_count = sum(is.na(c(beta, se, p_value)))
     if (missing_count != 1) {
       stop("Exactly one of beta, se, or p_value must be NA.")
     }

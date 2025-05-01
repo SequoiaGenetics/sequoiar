@@ -1,3 +1,6 @@
+#' @importFrom magrittr %>%
+NULL
+
 # harmonise data
 
 # Harmonise function for an arbitrary number of dataframes

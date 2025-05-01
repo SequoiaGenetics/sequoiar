@@ -1,7 +1,10 @@
+#' @importFrom magrittr %>%
+NULL
+
 # Create a function to check if an SNP is within a gene region
 map_snp_to_gene = function(snp_row, gene_df) {
   # Subset genes on the same chromosome
-  chr_genes = gene_df %>% filter(chr == snp_row$chr)
+  chr_genes = gene_df %>% dplyr::filter(chr == snp_row$chr)
   
   if (nrow(chr_genes) == 0) {
     return(data.frame(
@@ -15,13 +18,13 @@ map_snp_to_gene = function(snp_row, gene_df) {
   
   # Check if the SNP position falls within any gene region
   in_gene = chr_genes %>% 
-    filter(gene_start_pos <= snp_row$pos & gene_end_pos >= snp_row$pos)
+    dplyr::filter(gene_start_pos <= snp_row$pos & gene_end_pos >= snp_row$pos)
   
   # Determine which case: not_in_any_region, in_one_region, in_multiple_region
   if (nrow(in_gene) == 0) {
     # SNP is not in any gene region, find the closest gene
     chr_genes$distance = pmin(abs(chr_genes$gene_start_pos - snp_row$pos), abs(chr_genes$gene_end_pos - snp_row$pos))
-    closest_gene = chr_genes %>% arrange(distance) %>% slice(1)
+    closest_gene = chr_genes %>% dplyr::arrange(distance) %>% dplyr::slice(1)
     return(data.frame(
       SNP = snp_row$SNP,
       chr = snp_row$chr,
@@ -41,21 +44,21 @@ map_snp_to_gene = function(snp_row, gene_df) {
   } else {
     # SNP is in multiple gene regions
     result = in_gene %>%
-      mutate(SNP = snp_row$SNP, chr = snp_row$chr, pos = snp_row$pos, region_status = "in_multiple_region") %>%
-      select(SNP, chr, pos, region_status, gene) %>%
-      rename(closest_region = gene)
+      dplyr::mutate(SNP = snp_row$SNP, chr = snp_row$chr, pos = snp_row$pos, region_status = "in_multiple_region") %>%
+      dplyr::select(SNP, chr, pos, region_status, gene) %>%
+      dplyr::rename(closest_region = gene)
     
     return(result)
   }
 }
 
 # example
-df_genes = hg19 %>%
-  filter(gene_type == 'protein_coding') %>%
-  select(gene = gene_name, gene_id, chr = chromosome, gene_start_pos = gene_start, gene_end_pos = gene_end)
-
-# get closest gene
-mapped_snps = cluster_result %>%
-  rowwise() %>%
-  do(map_snp_to_gene(., df_genes)) %>%
-  ungroup()
+# df_genes = RACER::hg19 %>%
+#   filter(gene_type == 'protein_coding') %>%
+#   select(gene = gene_name, gene_id, chr = chromosome, gene_start_pos = gene_start, gene_end_pos = gene_end)
+# 
+# # get closest gene
+# mapped_snps = cluster_result %>%
+#   rowwise() %>%
+#   do(map_snp_to_gene(., df_genes)) %>%
+#   ungroup()
