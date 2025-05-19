@@ -19,15 +19,13 @@ Install directly from GitHub:
 devtools::install_github("SequoiaGenetics/sequoiar")
 ```
 
----
-
 ## 🔄 Upgrade
 
 To upgrade **SequoiaR** to the latest version from GitHub, simply reinstall it:
 
 ```r
 devtools::install_github("SequoiaGenetics/sequoiar", force = TRUE)
-
+```
 
 ---
 
@@ -36,6 +34,8 @@ After installation, if you're on Windows, you must manually provide a local copy
 ```r
 sg._copy_plink_win("C:/path/to/your/plink_dir")
 ```
+
+---
 
 ## 🧰 Functionality
 
