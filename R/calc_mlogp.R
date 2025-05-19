@@ -1,14 +1,18 @@
-#' Calculate -log10(p-value)
-#' @param df Data frame with p-value column
+#' Calculate -log10(p-value) with high precision fallback
+#'
+#' Computes the `mlogp` column as `-log10(pval)` for a given data frame.
+#' If `mlogp` is infinite due to extremely small p-values, it uses high-precision
+#' computation based on `beta` and `se` columns to recalculate `mlogp` values.
+#'
+#' @param df A data frame containing a `pval` column. If any resulting `mlogp` values are `Inf`,
+#' the `beta` and `se` columns must also be present for high-precision correction.
+#'
+#' @return A data frame identical to the input `df` but with an additional `mlogp` column.
+#'
+#' @importFrom Rmpfr mpfr asNumeric
 #' @export
-cal_mlogp = function(df){
-  # input:
-  #   - df: a data.frame, need to have `pval` column
-  #         `beta` and `se` column is required for Inf mlogp calculated
-  # output:
-  #   - df: the same df with mlogp calculated
-  
-  
+sg.cal_mlogp = function(df){
+
   if (!'pval' %in% colnames(df)){
     stop("Error, `pval` not in df's columns")
   }

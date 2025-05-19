@@ -1,13 +1,14 @@
 # 📦 SequoiaR
 
-**sequoiar** is an R package designed to streamline common tasks in genomic data analysis. It provides:
+**SequoiaR** is an R package designed to streamline common genomic data tasks with minimal setup and maximum flexibility. It provides:
 
-- Encapsulated utility functions (e.g., mlogp calculation, harmonisation, SNP-to-gene mapping)
-- A template system for quickly generating various analysis scripts (R and Python)
-- Optional automatic setup of external tools (e.g., PLINK and LD reference panel)
-- Minimal namespace pollution via qualified function usage (e.g., `dplyr::filter()`)
+- Utility functions for SNP annotation, harmonisation, clumping, and statistical completion
+- Support for local LD calculations using PLINK
+- A lightweight template system for generating R/Python analysis scripts
+- Minimal namespace pollution — fully qualified, encapsulated functions
 
 ---
+
 
 ## 🚀 Installation
 
@@ -20,37 +21,54 @@ devtools::install_github("SequoiaGenetics/sequoiar")
 
 ---
 
-## 🧰 Functionality
+## 🔄 Upgrade
 
-The package provides a suite of modular tools for working with GWAS and other summary statistics:
+To upgrade **SequoiaR** to the latest version from GitHub, simply reinstall it:
 
-| Function            | Purpose                                  |
-| ------------------- | ---------------------------------------- |
-| `cal_mlogp()`       | Compute `-log10(p)` using high precision |
-| `clump_local()`     | Locally LD-clump SNPs using PLINK        |
-| `create_template()` | Copy a template script to your workspace |
-| `harmonise()`       | Harmonise alleles across datasets        |
-| `map_snp_to_gene()` | Map SNPs to nearest or overlapping gene  |
-| `complete_stats()`  | Calculate missing GWAS stats (beta/se/p) |
-| `link_LD_local()`   | Add LD information to a data.frame       |
+```r
+devtools::install_github("SequoiaGenetics/sequoiar", force = TRUE)
 
-All internal functions use safe, encapsulated calls to avoid namespace conflicts.
 
 ---
 
-## 🧪 Templates Included (TODO)
+After installation, if you're on Windows, you must manually provide a local copy of PLINK and a reference panel:
 
-You can generate pre-written scripts using `create_template()`. Templates available include:
+```r
+sg._copy_plink_win("C:/path/to/your/plink_dir")
+```
+
+## 🧰 Functionality
+
+The following high-level functions are exported and ready to use:
+
+| Function                  | Purpose                                                 |
+| ------------------------- | ------------------------------------------------------- |
+| `sg.clump()`              | LD-based SNP clumping using mlogp col and local PLINK + EUR panel     |
+| `sg.harmonise()`          | Harmonise alleles across multiple datasets              |
+| `sg.link_LD_local()`      | Annotate SNPs with LD (r²) relative to a lead SNP       |
+| `sg.map_snps_to_genes()`  | Map SNPs to overlapping or nearest gene(s)              |
+| `sg.complete_stats()`     | Compute missing GWAS stats (beta, se, or p)             |
+| `sg._copy_plink_win()`    | Helper to copy PLINK and reference files to package dir |
+| `sg.create_gene_region()` | Get gene coordinates from RACER reference               |
+
+All functions are fully encapsulated — use them via sg. prefix to avoid namespace conflicts.
+
+---
+
+## 🧪 Templates Included (Coming Soon)
+
+create_template() will allow you （in the future) to scaffold common analyses from predefined templates:
 
 | Template Name             | Type   | Description                               |
 | ------------------------- | ------ | ----------------------------------------- |
-| `manhattan_plot`          | R      | Code for generating a Manhattan plot      |
-| `forest_plot`             | R      | Forest plot template                      |
-| `meta_analysis`           | R      | Fixed/random effects meta-analysis        |
-| `liftover`                | Python | GRCh37/38 position liftOver               |
-| `SNP_lookup`              | Python | Find and filter SNPs from reference files |
-| `target_analysis`         | Python | PheWAS/PWAS target analysis               |
-| `mendelian_randomisation` | R      | Basic two-sample MR pipeline              |
+| `manhattan_plot`          | R      | Manhattan plot generation                 |
+| `forest_plot`             | R      | Forest plot for MR/meta-analysis          |
+| `meta_analysis`           | R      | Fixed/random-effects GWAS meta-analysis   |
+| `liftover`                | Python | GRCh37 ↔ GRCh38 SNP coordinate conversion |
+| `SNP_lookup`              | Python | Reference-based SNP filtering             |
+| `target_analysis`         | Python | Target prioritisation (PheWAS/PWAS)       |
+| `mendelian_randomisation` | R      | 2-sample MR pipeline                      |
+
 
 To use:
 
@@ -62,16 +80,21 @@ create_template("manhattan_plot", type = "R", out_dir = "my_analysis/")
 
 ## ⚙️ PLINK and LD Reference Setup
 
-The function `clump_local()` uses PLINK and EUR reference data for LD-based clumping. If not found, these files will be:
+The sg.clump() and sg.link_LD_local() functions use a local PLINK binary and reference panel.
 
-- Automatically downloaded to: `~/.yourpkg/plink/`
-- Made executable on install
-- Used transparently by internal functions
+To configure:
 
-You can override this behavior by setting a custom path:
+- Download plink.exe (Windows) and EUR reference panel files (BED/BIM/FAM)
+- Run:
 
 ```r
-options(YourPackageName.plink_path = "/custom/path/plink")
+sg._copy_plink_win("C:/path/to/your/plink_dir")
+```
+
+This copies the files into:
+
+```
+<package install location>/sequoiar/plink/
 ```
 
 ---
@@ -79,14 +102,14 @@ options(YourPackageName.plink_path = "/custom/path/plink")
 ## 📁 Project Structure
 
 ```
-YourPackageName/
-├── R/                   # R function definitions
+sequoiar/
+├── R/                   # Function scripts
+├── man/                 # Auto-generated help files
 ├── inst/
-│   ├── templates/       # R and Python templates
-│   └── scripts/         # setup or shell scripts
-├── man/                 # Auto-generated documentation
+│   └── templates/       # R + Python templates (optional)
+├── NAMESPACE            # Auto-generated exports
 ├── DESCRIPTION          # Package metadata
-├── NAMESPACE            # Function exports/imports
+
 ```
 
 ---
@@ -103,8 +126,7 @@ MIT © 2025 SequoiaGenetics
 
 ---
 
-## ✨ Coming Soon (hopefully/or not)
-
-- Optional Docker image
-- Advanced QC workflows
-- Full VCF support for SNP/SV merging
+## ✨ Roadmap
+- Docker image with PLINK pre-installed
+- VCF integration for SNP/SV merging
+- Template engine for automated workflow scaffolding
