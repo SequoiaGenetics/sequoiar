@@ -27,7 +27,6 @@ To upgrade **SequoiaR** to the latest version from GitHub, simply reinstall it:
 devtools::install_github("SequoiaGenetics/sequoiar", force = TRUE)
 ```
 
----
 
 After installation, if you're on Windows, you must manually provide a local copy of PLINK and a reference panel:
 
