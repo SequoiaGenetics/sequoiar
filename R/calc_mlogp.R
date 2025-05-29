@@ -17,7 +17,7 @@ sg.cal_mlogp = function(df){
     stop("Error, `pval` not in df's columns")
   }
   
-  df$mlogp = -log10(df$pva)
+  df$mlogp = -log10(df$pval)
   
   # get rows with Inf mlogp
   inf_mlogp_df = df[is.infinite(df$mlogp), ]

@@ -22,7 +22,7 @@
 #' # get closest gene
 #' mapped_snps = cluster_result %>%
 #'   rowwise() %>%
-#'   do(map_snp_to_gene(., df_genes)) %>%
+#'   do(sg.map_snp_to_gene(., df_genes)) %>%
 #'   ungroup()
 #'
 #' @export

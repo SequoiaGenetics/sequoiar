@@ -19,9 +19,6 @@ sg.clump = function(df, clump_r2){
   pval_column = "mlogp"
   
   # path to plink and reference panel
-  bfile = paste0("util/plink/EUR") # EUR reference panel
-  plink_bin = paste0("util/plink/plink")
-  
   plink_dir = file.path(system.file(package = "sequoiar"), "plink")
   plink_bin = file.path(plink_dir, ifelse(.Platform$OS.type == "windows", "plink.exe", "plink"))
   bfile = file.path(plink_dir, "EUR")  # Exclude file extension to let PLINK find .bed/.bim/.fam
