@@ -27,6 +27,6 @@
                     ss       ss                   
                     sssssssssss                   
                     ss      sss       SequoiaR            
-                     ss    sss        Version: 0.2.1'
+                     ss    sss        Version: 0.2.2'
   )
 }
