@@ -33,7 +33,7 @@ sg.get_proxy = function(rsid, r2_threshold = 0.5, bfile = NULL){
     bfile = file.path(plink_dir, "EUR")  # Exclude file extension to let PLINK find .bed/.bim/.fam
   }
   
-  messgae(paste0('Finding proxy SNPs with '))
+  message(paste0('Finding proxy SNPs with '))
   
   if (!file.exists(plink_bin)) {
     stop("PLINK binary not found in package plink directory. Please run `sg._copy_plink_win()` first.")
