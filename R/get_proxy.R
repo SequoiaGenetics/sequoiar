@@ -68,6 +68,7 @@ sg.get_proxy = function(rsid, r2_threshold = 0.5, bfile = NULL){
   
   # Check for known PLINK error
   if (any(grepl("Error: No valid variants specified", plink_output))) {
+    unlink(paste0(fn_prefix, "*"))
     stop(paste0("❌ SNP '", rsid, "' not found in reference panel."))
   }
   
