@@ -1,6 +1,6 @@
 Package: sequoiar
 Title: Utility Functions and Templates for Genomic Analysis
-Version: 0.2.1
+Version: 0.2.3
 Authors@R: 
     person(given = "Linxuan", 
            family = "Zhang", 

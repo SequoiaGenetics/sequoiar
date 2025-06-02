@@ -4,17 +4,108 @@
 \alias{sg.cal_mlogp}
 \title{Calculate -log10(p-value) with high precision fallback}
 \usage{
-sg.cal_mlogp(df)
+sg.cal_mlogp(
+  df,
+  start_prec = 256,
+  max_prec = 4096,
+  prec_step = 256,
+  max_iter = 10,
+  verbose = TRUE
+)
 }
 \arguments{
-\item{df}{A data frame containing a `pval` column. If any resulting `mlogp` values are `Inf`,
-the `beta` and `se` columns must also be present for high-precision correction.}
+\item{df}{A data frame containing a `pval` column. If any resulting `mlogp`
+values are `Inf`, the `beta` and `se` columns must also be present in `df`
+for high-precision correction.}
+
+\item{start_prec}{Numeric. Initial precision in bits for `Rmpfr` calculations.
+Default is 256.}
+
+\item{max_prec}{Numeric. Maximum precision in bits for `Rmpfr` calculations.
+The function will not attempt precision beyond this value. Default is 4096.}
+
+\item{prec_step}{Numeric. Increment in bits for precision in each iteration if
+`Inf` values persist. Default is 256.}
+
+\item{max_iter}{Integer. Maximum number of iterations for increasing precision.
+Default is 10.}
+
+\item{verbose}{Logical. If `TRUE`, prints messages about the high-precision
+calculation process. Default is `TRUE`.}
 }
 \value{
-A data frame identical to the input `df` but with an additional `mlogp` column.
+A data frame identical to the input `df` but with an additional
+  `mlogp` column. If `mlogp` could not be resolved from `Inf` even with
+  high precision (e.g., `beta` and `se` not provided, `Rmpfr` not installed,
+  or p-value is truly zero even at `max_prec`), it will remain `Inf`.
+  Values that were `NA` in `pval` will result in `NA` in `mlogp`.
 }
 \description{
 Computes the `mlogp` column as `-log10(pval)` for a given data frame.
-If `mlogp` is infinite due to extremely small p-values, it uses high-precision
-computation based on `beta` and `se` columns to recalculate `mlogp` values.
+If any calculated `mlogp` values are `Inf` (often due to extremely small p-values
+underflowing to 0 in standard double precision), this function attempts to
+recalculate these `mlogp` values using high-precision arithmetic via the `Rmpfr`
+package, provided that `beta` and `se` columns are available in the input data frame.
+}
+\examples{
+# Create a sample data frame
+df_test <- data.frame(
+  id = 1:5,
+  # pval for id=3 is small but non-zero, id=4,5 will be 0 in double precision
+  pval = c(0.05, 1e-50, 1e-300, 1e-310, 1e-400),
+  beta = c(0.5, 1.0, 10, 15, 20),
+  se = c(0.1, 0.1, 0.1, 0.1, 0.1) # For Z=100, Z=150, Z=200
+)
+# For 1e-310, -log10() is 310. For 1e-400, pval becomes 0, -log10(0) is Inf.
+
+# Add a case with SE = 0 (should remain Inf or handle as per interpretation)
+df_test_se0 <- data.frame(
+  id = 6:7,
+  pval = c(0, 0), # pval might be pre-set to 0 if SE was 0
+  beta = c(1, 0),
+  se = c(0, 0.005) # SE=0 for id=6, normal for id=7 (Z=0)
+)
+df_test <- rbind(df_test, df_test_se0)
+
+# Add a case where pval is NA
+df_test_na <- data.frame(id=8, pval=NA, beta=1, se=0.1)
+df_test <- rbind(df_test, df_test_na)
+
+print("Original df_test:")
+print(df_test)
+
+# Calculate mlogp
+# Ensure Rmpfr is installed for this example to run fully for small p-values
+if (requireNamespace("Rmpfr", quietly = TRUE)) {
+  df_with_mlogp <- sg.cal_mlogp(df_test, verbose = TRUE, max_iter = 3) # Limit iter for example speed
+  print("df_test with mlogp:")
+  print(df_with_mlogp)
+
+  # Example with only pval, no beta/se, and one Inf
+  df_simple_inf <- data.frame(pval = c(0.01, 0))
+  # This will attempt high-precision, then error if beta/se are missing.
+  message("Example with Inf pval but no beta/se (expect error):")
+  tryCatch({
+    sg.cal_mlogp(df_simple_inf)
+  }, error = function(e) {
+    message("Caught expected error: ", e$message)
+    # Show what happens without Rmpfr (manually)
+    df_simple_inf$mlogp_manual <- -log10(df_simple_inf$pval)
+    print(df_simple_inf)
+  })
+
+} else {
+  message("Rmpfr not installed. High-precision fallback will not be fully demonstrated.")
+  # Calculate mlogp without Rmpfr fallback (will show Inf for pval=0)
+  df_test$mlogp_no_rmpfr <- -log10(df_test$pval)
+  print("df_test with mlogp (Rmpfr not available):")
+  print(df_test)
+}
+
+# Example of a p-value that doesn't need Rmpfr at all
+df_no_inf <- data.frame(pval = c(0.1, 0.01, 0.0000000000000000000000000000000000000001))
+# The last pval is 1e-40, -log10(1e-40) = 40. No Inf.
+print("Example with no Inf needing correction:")
+print(sg.cal_mlogp(df_no_inf, verbose = FALSE))
+
 }

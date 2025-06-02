@@ -18,3 +18,8 @@ This function copies all files (including `plink.exe`, `.bed`, `.bim`, `.fam`, e
 from a specified local directory into the internal `plink/` folder inside the installed
 package directory (i.e., where `system.file(package = "sequoiar")` points to).
 }
+\examples{
+\dontrun{
+sg._copy_plink_win("V:/resource/tools/plink")
+}
+}

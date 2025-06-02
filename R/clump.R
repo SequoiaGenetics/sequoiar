@@ -118,7 +118,7 @@ sg.clump = function(df, clump_r2){
 #' @examples
 #' \dontrun{
 #' sg._copy_plink_win("V:/resource/tools/plink")
-#' 
+#' }
 #' @export
 sg._copy_plink_win = function(local_plink_dir) {
   # Destination: plink folder inside installed package directory
