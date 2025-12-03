@@ -19,38 +19,34 @@
 #' fn(beta = 0.1, se = NA, p_value = 0.01)     # Calculate se
 #'
 #' @export
-sg.complete_stats = function(){
-  # input:
-  #   - beta, se, pval should be vectors
-  #   - method should be either "chisq" or "normal"
-  function(beta = NA, se = NA, p_value = NA, method = "chisq") {
-    
-    # function(beta = NA, se = NA, p_value = NA, method = "chisq") {
-    # Ensure exactly one value is missing
-    missing_count = sum(is.na(c(beta, se, p_value)))
-    if (missing_count != 1) {
-      stop("Exactly one of beta, se, or p_value must be NA.")
+sg.complete_stats = function(beta = NA, se = NA, p_value = NA, method = "chisq") {
+  
+  # function(beta = NA, se = NA, p_value = NA, method = "chisq") {
+  # Ensure exactly one value is missing
+  missing_count = sum(is.na(c(beta, se, p_value)))
+  if (missing_count != 1) {
+    stop("Exactly one of beta, se, or p_value must be NA.")
+  }
+  
+  if (method == "normal") {
+    if (is.na(p_value)) {
+      return(c(p_value = calculate_pvalue_normal(beta, se)))
+    } else if (is.na(beta)) {
+      return(c(beta = calculate_beta_normal(se, p_value)))
+    } else if (is.na(se)) {
+      return(c(se = calculate_se_normal(beta, p_value)))
     }
-    
-    if (method == "normal") {
-      if (is.na(p_value)) {
-        return(c(p_value = calculate_pvalue_normal(beta, se)))
-      } else if (is.na(beta)) {
-        return(c(beta = calculate_beta_normal(se, p_value)))
-      } else if (is.na(se)) {
-        return(c(se = calculate_se_normal(beta, p_value)))
-      }
-    } else {  # Default to Chi-square
-      if (is.na(p_value)) {
-        return(c(p_value = calculate_pvalue_chisq(beta, se)))
-      } else if (is.na(beta)) {
-        return(c(beta = calculate_beta_chisq(se, p_value)))
-      } else if (is.na(se)) {
-        return(c(se = calculate_se_chisq(beta, p_value)))
-      }
+  } else {  # Default to Chi-square
+    if (is.na(p_value)) {
+      return(c(p_value = calculate_pvalue_chisq(beta, se)))
+    } else if (is.na(beta)) {
+      return(c(beta = calculate_beta_chisq(se, p_value)))
+    } else if (is.na(se)) {
+      return(c(se = calculate_se_chisq(beta, p_value)))
     }
   }
 }
+
 
 #'  Function to calculate p-value using the Chi-square distribution (df = 1)
 #' @keywords internal
