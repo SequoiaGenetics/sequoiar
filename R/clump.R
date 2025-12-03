@@ -102,8 +102,15 @@ sg.clump = function(df, clump_r2){
   return(output_df)
 }
 
+#' Perform LD Clumping using PLINK
+#'
+#' This function filters SNPs based on Linkage Disequilibrium (LD) using an
+#' external PLINK binary and a reference panel. It writes temporary files,
+#' runs PLINK, and returns the pruned dataframe.
+#'
 #' @param df A data frame containing at least `SNP` and `mlogp` columns. `mlogp` must not contain Inf.
 #' @param clump_r2 Numeric. The r² threshold for LD clumping (e.g., 0.1).
+#' @param p_threshold Numeric. The P-value threshold for filtering SNPs before clumping (default 0.05).
 #'
 #' @return A data frame of SNPs that remain after clumping, with the same structure as input `df`.
 #' 
