@@ -108,7 +108,7 @@ sg.clump = function(df, clump_r2){
 #' @return A data frame of SNPs that remain after clumping, with the same structure as input `df`.
 #' 
 #' @export
-sg.clump_full = function(df, clump_r2){
+sg.clump_full = function(df, clump_r2, p_threshold=0.05){
   
   # init constant
   clump_kb = 10000
@@ -135,8 +135,10 @@ sg.clump_full = function(df, clump_r2){
     stop("Error: `mlogp` column contains Inf values.")
   }
   
+  sig_df = df[df$mlogp > -log10(p_threshold), ]
+  
   # filter out rows without rsID and create input df
-  input_df = df[grepl("^rs", df$SNP), c("SNP", "mlogp")]
+  input_df = sig_df[grepl("^rs", sig_df$SNP), c("SNP", "mlogp")]
   
   if (nrow(input_df) == 0) {
     stop("Clumping stopped: no significant SNPs with rsIDs.")
