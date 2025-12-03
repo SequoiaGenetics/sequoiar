@@ -3,6 +3,7 @@
 export(sg._copy_plink_win)
 export(sg.cal_mlogp)
 export(sg.clump)
+export(sg.clump_full)
 export(sg.complete_stats)
 export(sg.create_gene_region)
 export(sg.get_proxy)

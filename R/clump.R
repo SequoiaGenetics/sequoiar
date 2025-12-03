@@ -102,7 +102,12 @@ sg.clump = function(df, clump_r2){
   return(output_df)
 }
 
-
+#' @param df A data frame containing at least `SNP` and `mlogp` columns. `mlogp` must not contain Inf.
+#' @param clump_r2 Numeric. The r² threshold for LD clumping (e.g., 0.1).
+#'
+#' @return A data frame of SNPs that remain after clumping, with the same structure as input `df`.
+#' 
+#' @export
 sg.clump_full = function(df, clump_r2){
   
   # init constant

@@ -4,7 +4,7 @@
 \alias{sg.complete_stats}
 \title{Complete missing GWAS summary statistics}
 \usage{
-sg.complete_stats()
+sg.complete_stats(beta = NA, se = NA, p_value = NA, method = "chisq")
 }
 \value{
 A function that accepts the arguments:
